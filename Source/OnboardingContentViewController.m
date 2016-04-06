@@ -236,33 +236,8 @@ NSString * const kOnboardActionButtonAccessibilityIdentifier = @"OnboardActionBu
     CGFloat horizontalCenter = viewWidth / 2;
     CGFloat contentWidth = viewWidth * kContentWidthMultiplier;
     
-    if (_image) {
-        
-        // create the image view with the appropriate image, size, and center in on screen
-        _imageView = [[UIImageView alloc] initWithImage:_image];
-        [_imageView setFrame:CGRectMake(horizontalCenter - (self.iconWidth / 2), self.topPadding, self.iconWidth, self.iconHeight)];
-        [self.view addSubview:_imageView];
-    
-    } else if (self.videoURL) {
-        
-        // or if we have a video create and configure the video player controller
-        self.moviePlayerController = [MPMoviePlayerController new];
-        self.moviePlayerController.contentURL = self.videoURL;
-        self.moviePlayerController.view.frame = self.view.frame;
-        self.moviePlayerController.repeatMode = MPMovieRepeatModeOne;
-        self.moviePlayerController.controlStyle = MPMovieControlStyleNone;
-        
-        UIImageView *thumbnailImageView = [[UIImageView alloc] initWithImage:[self thumbnailImageForVideo:self.videoURL]];
-        thumbnailImageView.frame = self.view.frame;
-        thumbnailImageView.contentMode = UIViewContentModeScaleAspectFit;
-        
-        [self.moviePlayerController.backgroundView addSubview:thumbnailImageView];
-        
-        [self.view addSubview:self.moviePlayerController.view];
-    }
-    
     // create and configure the main text label sitting underneath the icon with the provided padding
-    _mainTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, CGRectGetMaxY(_imageView.frame) + self.underIconPadding, contentWidth, 0)];
+    _mainTextLabel = [[UILabel alloc] initWithFrame:CGRectMake(0, self.topPadding, contentWidth, 0)];
     _mainTextLabel.accessibilityIdentifier = kOnboardMainTextAccessibilityIdentifier;
     _mainTextLabel.text = _titleText;
     _mainTextLabel.textColor = self.titleTextColor;
@@ -284,6 +259,31 @@ NSString * const kOnboardActionButtonAccessibilityIdentifier = @"OnboardActionBu
     [_subTextLabel sizeToFit];
     _subTextLabel.center = CGPointMake(horizontalCenter, _subTextLabel.center.y);
     [self.view addSubview:_subTextLabel];
+    
+    if (_image) {
+        
+        // create the image view with the appropriate image, size, and center in on screen
+        _imageView = [[UIImageView alloc] initWithImage:_image];
+        [_imageView setFrame:CGRectMake(horizontalCenter - (self.iconWidth / 2), CGRectGetMaxY(_subTextLabel.frame) + self.underIconPadding, self.iconWidth, self.iconHeight)];
+        [self.view addSubview:_imageView];
+    
+    } else if (self.videoURL) {
+        
+        // or if we have a video create and configure the video player controller
+        self.moviePlayerController = [MPMoviePlayerController new];
+        self.moviePlayerController.contentURL = self.videoURL;
+        self.moviePlayerController.view.frame = self.view.frame;
+        self.moviePlayerController.repeatMode = MPMovieRepeatModeOne;
+        self.moviePlayerController.controlStyle = MPMovieControlStyleNone;
+        
+        UIImageView *thumbnailImageView = [[UIImageView alloc] initWithImage:[self thumbnailImageForVideo:self.videoURL]];
+        thumbnailImageView.frame = self.view.frame;
+        thumbnailImageView.contentMode = UIViewContentModeScaleAspectFit;
+        
+        [self.moviePlayerController.backgroundView addSubview:thumbnailImageView];
+        
+        [self.view addSubview:self.moviePlayerController.view];
+    }
     
     // create the action button if we were given button text
     if (_buttonText) {
