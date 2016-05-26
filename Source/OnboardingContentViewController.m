@@ -285,8 +285,18 @@ NSString * const kOnboardActionButtonAccessibilityIdentifier = @"OnboardActionBu
         [self.view addSubview:self.moviePlayerController.view];
     }
     
-    // create the action button if we were given button text
-    if (_buttonText) {
+    
+    // create the action buttons if we were given buttons or button text
+    if (self.buttons) {
+        int i = 0;
+        for (UIButton *button in self.buttons) {
+            CGRect frame = CGRectMake((CGRectGetMaxX(self.view.frame) / 2) - (contentWidth / 2), CGRectGetMaxY(_imageView.frame) + self.underIconPadding + i * (kActionButtonHeight + self.betweenImagePadding), contentWidth, kActionButtonHeight);
+            button.frame = frame;
+            button.titleLabel.font = [UIFont fontWithName:self.buttonFontName size:self.buttonFontSize];
+            [self.view addSubview:button];
+            i++;
+        }
+    } else if (_buttonText) {
         _actionButton = [[UIButton alloc] initWithFrame:CGRectMake((CGRectGetMaxX(self.view.frame) / 2) - (contentWidth / 2), CGRectGetMaxY(self.view.frame) - self.underPageControlPadding - kMainPageControlHeight - kActionButtonHeight - self.bottomPadding, contentWidth, kActionButtonHeight)];
         _actionButton.accessibilityIdentifier = kOnboardActionButtonAccessibilityIdentifier;
         _actionButton.titleLabel.font = [UIFont fontWithName:self.buttonFontName size:self.buttonFontSize];
